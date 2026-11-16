@@ -9,7 +9,7 @@ export default function Login() {
   const [params] = useSearchParams();
   const { status, signOut } = useAuth();
 
-  const isRestricted = params.get("restricted") === "true" || status === "restricted";
+  const isRestricted = params.get("restricted") === "true";
 
   useEffect(() => {
     if (status === "allowed") navigate("/dashboard", { replace: true });

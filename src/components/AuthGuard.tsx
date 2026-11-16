@@ -1,5 +1,4 @@
-import { useEffect, type ReactNode } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -10,14 +9,6 @@ interface AuthGuardProps {
 
 export default function AuthGuard({ children }: AuthGuardProps) {
   const { status } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (status === "restricted") {
-      navigate("/login?restricted=true", { replace: true });
-    }
-  }, [status, navigate, location]);
 
   if (status === "loading") {
     return (
@@ -36,8 +27,6 @@ export default function AuthGuard({ children }: AuthGuardProps) {
       </div>
     );
   }
-
-  if (status === "restricted") return null;
 
   return <>{children}</>;
 }
