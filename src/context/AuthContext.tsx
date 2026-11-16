@@ -18,7 +18,6 @@ interface AuthContextValue {
   user: User | null;
   session: Session | null;
   status: AuthStatus;
-  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -96,17 +95,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, [resolveStatus]);
 
-  const signInWithGoogle = useCallback(async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        queryParams: { prompt: "select_account" },
-      },
-    });
-    if (error) throw error;
-  }, []);
-
   const signOut = useCallback(async () => {
     resolvedForRef.current = undefined;
     await supabase.auth.signOut();
@@ -114,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, session, status, signInWithGoogle, signOut }}
+      value={{ user, session, status, signOut }}
     >
       {children}
     </AuthContext.Provider>
