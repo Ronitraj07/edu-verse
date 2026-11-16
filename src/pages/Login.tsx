@@ -1,42 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldX, ArrowRight, Loader2 } from "lucide-react";
+import { ShieldX, ArrowRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-
-const GoogleIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-    <path d="M44.5 20H24v8.5h11.8C34.7 33.9 29.8 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6-6C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c10.5 0 20-7.6 20-21 0-1.3-.2-2.7-.5-4z" fill="#FFC107"/>
-    <path d="M6.3 14.7l7 5.1C15.1 16 19.2 13 24 13c3.1 0 5.9 1.1 8.1 2.9l6-6C34.6 5.1 29.6 3 24 3c-7.7 0-14.4 4.4-17.7 11.7z" fill="#FF3D00"/>
-    <path d="M24 45c5.5 0 10.5-1.9 14.3-5.1l-6.6-5.6C29.6 36 26.9 37 24 37c-5.7 0-10.6-3.1-11.7-7.5l-7 5.4C8 41.1 15.4 45 24 45z" fill="#4CAF50"/>
-    <path d="M44.5 20H24v8.5h11.8c-.8 2.3-2.3 4.3-4.2 5.8l6.6 5.6C41.8 36.5 45 30.7 45 24c0-1.3-.2-2.7-.5-4z" fill="#1976D2"/>
-  </svg>
-);
 
 export default function Login() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const { status, signInWithGoogle, signOut } = useAuth();
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { status, signOut } = useAuth();
 
   const isRestricted = params.get("restricted") === "true" || status === "restricted";
 
   useEffect(() => {
     if (status === "allowed") navigate("/dashboard", { replace: true });
   }, [status, navigate]);
-
-  const handleGoogleSignIn = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      await signInWithGoogle();
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Sign-in failed. Please try again.");
-      setLoading(false);
-    }
-  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -120,8 +97,7 @@ export default function Login() {
                 Access Restricted
               </h1>
               <p className="text-sm text-muted-foreground mb-2 leading-relaxed">
-                This platform is invite-only. Your Google account is not on the
-                authorised list.
+                This platform is invite-only. Your account is not on the authorised list.
               </p>
               <p className="text-xs text-muted-foreground/60 mb-8">
                 Contact the admin if you believe this is a mistake.
@@ -166,45 +142,21 @@ export default function Login() {
 
               <div className="text-center mb-8">
                 <h1 className="font-display text-2xl font-bold gradient-text mb-2">Welcome Back</h1>
-                <p className="text-sm text-muted-foreground">Sign in with your Google account to continue</p>
+                <p className="text-sm text-muted-foreground">Click below to continue</p>
               </div>
-
-              <AnimatePresence>
-                {error && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="mb-4 px-4 py-3 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-sm"
-                    role="alert"
-                  >
-                    {error}
-                  </motion.div>
-                )}
-              </AnimatePresence>
 
               <button
                 type="button"
-                onClick={handleGoogleSignIn}
-                disabled={loading || status === "loading"}
+                onClick={() => navigate("/dashboard")}
                 className="w-full flex items-center justify-center gap-3 px-4 rounded-xl bg-secondary border border-border text-foreground text-sm font-medium hover:bg-secondary/80 hover:border-primary/30 transition-all duration-300 group disabled:opacity-60 disabled:cursor-not-allowed"
                 style={{ minHeight: 52, fontSize: "var(--text-sm)" }}
               >
-                {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin text-primary" aria-hidden="true" />
-                ) : (
-                  <GoogleIcon />
-                )}
-                {loading ? "Redirecting to Google…" : "Continue with Google"}
-                {!loading && (
-                  <ArrowRight className="w-4 h-4 ml-auto text-muted-foreground group-hover:translate-x-1 group-hover:text-primary transition-all" aria-hidden="true" />
-                )}
+                Continue
+                <ArrowRight className="w-4 h-4 ml-auto text-muted-foreground group-hover:translate-x-1 group-hover:text-primary transition-all" aria-hidden="true" />
               </button>
 
               <p className="text-xs text-muted-foreground/60 text-center mt-6 leading-relaxed">
-                Access is restricted to authorised accounts only.
-                <br />
-                Email/password login is not available.
+                Demo access only. Your account is not signed in.
               </p>
             </motion.div>
           )}

@@ -14,9 +14,6 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   const location = useLocation();
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      navigate("/login", { replace: true, state: { from: location } });
-    }
     if (status === "restricted") {
       navigate("/login?restricted=true", { replace: true });
     }
@@ -40,7 +37,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     );
   }
 
-  if (status !== "allowed") return null;
+  if (status === "restricted") return null;
 
   return <>{children}</>;
 }
